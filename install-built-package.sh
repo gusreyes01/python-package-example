@@ -1,6 +1,12 @@
-#/bin/bash
-# https://packaging.python.org/distributing/#working-in-development-mode
+#!/usr/bin/env bash
+set -euo pipefail
 
-#only works after running build-package.sh
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+wheel="$(find "$repo_root/package-project/src/dist" -maxdepth 1 -name 'boopackage-*.whl' -print -quit)"
 
-pip3 install --no-cache-dir ./package-project/src/dist/boopackage-1.0-py2.py3-none-any.whl
+if [[ -z "$wheel" ]]; then
+  echo "No wheel found. Run ./build-package.sh first." >&2
+  exit 1
+fi
+
+python3 -m pip install --force-reinstall "$wheel"

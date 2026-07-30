@@ -1,4 +1,5 @@
-#/bin/bash
-# https://packaging.python.org/guides/distributing-packages-using-setuptools/#working-in-development-mode
+#!/usr/bin/env bash
+set -euo pipefail
 
-python3 ./package-consumer-project/consumepackage.py
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+python3 "$repo_root/package-consumer-project/consumepackage.py"

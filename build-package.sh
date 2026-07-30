@@ -1,14 +1,7 @@
-#/bin/bash
-die () {
-	echo >&2 "$@"
-	exit 1
-}
+#!/usr/bin/env bash
+set -euo pipefail
 
-pushd .
-cd ./package-project/src
-# Warning: eggs are deprecated in favor of wheels, and not supported by pip. - https://packaging.python.org/discussions/wheel-vs-egg/
-# python3 ./setup.py bdist_egg || die 'python setup failed'
-python3 ./setup.py bdist_wheel || die 'python setup failed'
-popd .
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$repo_root/package-project/src"
 
-echo; echo
+python3 -m build

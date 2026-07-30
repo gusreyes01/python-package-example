@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=77.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "boopackage"
+version = "1.0.0"
+description = "A minimal package used to demonstrate modern Python packaging"
+readme = "README.rst"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+  { name = "Scott Willeke", email = "scott@willeke.com" }
+]
+keywords = ["example", "packaging", "setuptools", "education"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Software Development :: Libraries :: Python Modules"
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8,<10",
+  "ruff>=0.12,<1"
+]
+
+[project.urls]
+Repository = "https://github.com/gusreyes01/python-package-example"
+Documentation = "https://github.com/gusreyes01/python-package-example#readme"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["boopackage*"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100

@@ -1,10 +1,6 @@
-#/bin/bash
-# https://packaging.python.org/guides/distributing-packages-using-setuptools/#working-in-development-mode
-pushd .
-cd ./package-project/src/
-pip3 install -e ./
-popd
+#!/usr/bin/env bash
+set -euo pipefail
 
-echo; echo "Showing package info:"
-
-pip3 show boopackage
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+python3 -m pip install --editable "$repo_root/package-project/src[dev]"
+python3 -m pip show boopackage

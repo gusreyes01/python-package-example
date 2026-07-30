@@ -1,40 +1,66 @@
-# Python Package Demo
+# Python Package Example
 
-This is a simple example of creating and consuming a distributable Python package. While I find the Python language to be intuitive and useful, for some reason I often struggle with `pip` & packages - both creating them and consuming them. So this is to just be a simple example of how to create and consume a package as a reference for myself.
+A small, executable reference for building, installing, testing, and consuming
+a Python package with the current PyPA workflow. The example intentionally
+keeps the package tiny so the packaging mechanics remain visible.
 
-This is not intended to be a replacement for the [Python Packaging User Guide (PyPUG)](https://packaging.python.org/) and its corresponding [sample project](https://github.com/pypa/sampleproject). I've used that as my primary reference, and I encourage others to do the same. This has a slightly simplified example and a FAQ and Troubleshooting section with some questions and problems I've encountered while exploring Python. Happy to accept PRs for suggested improvements.
+## Repository layout
 
-# Contents
+- `package-project/src/` is the package project root. It contains
+  `pyproject.toml`, the `boopackage` source, and package-specific documentation.
+- `package-project/tests/` contains behavioral tests for the installed package.
+- `package-consumer-project/` is a separate script that imports `boopackage`
+  like a downstream application.
+- The root shell scripts demonstrate build, editable-install, wheel-install,
+  consumer-smoke, and uninstall operations.
 
-- `package-project` contains a project directory for a Python package. Note that its only content is the `package-project/src` directory for now. If you wanted to add tests or something you could put those in `package-project/tests` or something.
-- `package-project/src/boopackage` is the actual "package". In accordance with Python's [documented behavior](https://docs.python.org/2.7/tutorial/modules.html#tut-packages), the directory is a package because it contains an `__init__.py` file.
-- `package-consumer-project` is a project directory containing a Python module/script/app that consumes the package in `package-project/src/boopackage`.
+Python 3.10 or newer is required.
 
-# FAQ
+## Set up a development environment
 
-## How do I install and use a package in Development Mode?
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install --upgrade pip build
+./install-devmode-package.sh
+ruff check package-project/src/boopackage package-project/tests package-consumer-project
+pytest package-project/tests
+```
 
-[Development Mode](https://packaging.python.org/distributing/#working-in-development-mode) installs the package in "editable" mode so that you can change the source for your package in the actual source directory and consuming Python scripts/applications will see your edits the next time they run. To install your package in Development Mode run `install-package-devmode.sh`.
-Note that this script also runs `pip show boopackage` to confirm that the package `boopackage` is installed.
+The editable install includes the development tools declared in
+`pyproject.toml`, so changes under `boopackage/` are visible immediately
+without reinstalling.
 
-## How do I Package/Bundle/Zip/Prepare my source code into a distributable package that I can distribute to others to use in their own Python apps?
+## Build distributions
 
-Run `build-package.sh` to prepare your package source code for distribution. This will deploy a distributable Python package into `package-project/src/dist/boopackage-1.0.tar.gz`.
+```bash
+python3 -m pip install build
+./build-package.sh
+```
 
-## How do other users install the package once it's built?
+The script uses the PEP 517 frontend (`python -m build`) and writes both a
+wheel and source distribution under `package-project/src/dist/`. Calling
+`setup.py` directly is intentionally not part of this example.
 
-Other users can run `pip install boopackage-1.0.tar.gz` to install your package. See `install-built-package.sh` as an example. To use the package once it's installed see `test-consume-package.sh` which simply runs the Python script/app in `package-consumer-project/consumepackage.py` that uses the package `boopackage`.
+## Install and consume the wheel
 
-Alternatively, you can [upload your built package to PyPI](https://packaging.python.org/distributing/#uploading-your-project-to-pypi) and then they can install it by running `pip install boopackage`.
+```bash
+./install-built-package.sh
+./test-consume-package.sh
+```
 
-## What are the differences between "Python Packages" and eggs?
+The consumer prints the same absolute-import and relative-import demonstration
+used by the test suite, followed by `it worked!`.
 
-I've been trying to figure that out myself. I can tell you that eggs appear to [essentially be deprecated](https://packaging.python.org/discussions/wheel-vs-egg/) and as noted on the previously linked python.org site _Wheel is currently considered the standard for built and binary packaging for Python._ Therefore I no longer maintain an example of building eggs, but some docs you might find interesting are as follows: "Python Packages" are documented at https://packaging.python.org/distributing/ and Eggs are documented at http://peak.telecommunity.com/DevCenter/PythonEggs
+## Why wheels instead of eggs?
 
-# Troubleshooting
+Eggs are obsolete. Wheels are the standard built distribution format, while
+source distributions provide a portable source archive. See the
+[Python Packaging User Guide](https://packaging.python.org/en/latest/tutorials/packaging-projects/)
+for the complete publishing workflow.
 
-## After installing the package I still see the error 'ImportError: No module named <mypackage>' when trying to use it in a script/app.
+## Quality and security
 
-It is important that the `setup.py` is in the **parent** of the actual root package folder. If you don't do this you won't get any errors, and pip will show you're package as installed (e.g. with `pip show <mypackage>`) but consuming scripts of the package won't ever find the package and will always get the `ImportError`.
-
-So this also implies that the "package" isn't what you specify as the name of your package in `setup.py`. Although `pip` uses the name in `setup.py` to determine whether it is installed, Python itself only cares about the directory that contains the `__init__.py` file.
+CI builds the distributions, installs the wheel, runs the behavioral tests,
+and executes the downstream consumer on supported Python versions. See
+[CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md).

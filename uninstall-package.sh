@@ -1,5 +1,4 @@
-#/bin/bash
-# https://packaging.python.org/distributing
-# https://packaging.python.org/guides/distributing-packages-using-setuptools/#working-in-development-mode
+#!/usr/bin/env bash
+set -euo pipefail
 
-pip3 uninstall --yes --no-cache-dir boopackage
+python3 -m pip uninstall --yes boopackage

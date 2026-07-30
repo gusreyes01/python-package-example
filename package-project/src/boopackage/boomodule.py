@@ -1,6 +1,6 @@
-from __future__ import print_function
-# demonstrating relative verses absolute imports as described at https://www.python.org/dev/peps/pep-0328/
+# Demonstrate absolute and relative imports as described by PEP 328.
 from boopackage.barmodule import barfunc
+
 from .barmodule import barfunc as barfunc_relative
 
 
